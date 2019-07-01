@@ -21,9 +21,16 @@ Can becomes this:
 
 Or:
 ```
-	Hello world!
+		Hello world!
 
-	I came; I saw; I conquered.
+		I came; I saw; I conquered.
+```
+
+Or:
+```
+-----Hello world!
+
+-----I came; I saw; I conquered.
 ```
 
 You can specify how much indentation you want, and what you want the indentation to be
