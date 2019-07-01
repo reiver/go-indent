@@ -6,17 +6,19 @@ in front of each non-empty line.
 
 So, for example, this:
 
+	.
 	Hello world!
 
 	I came; I saw; I conquered.
 
 Can becomes this:
 
+	.
 	        Hello world!
 
 	        I came; I saw; I conquered.
 Or:
-
+	.
 		-----Hello world!
 
 		-----I came; I saw; I conquered.
