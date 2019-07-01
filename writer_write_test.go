@@ -871,16 +871,23 @@ one/two/three[20<num][num<50] {
 			continue
 		}
 
-		if expected, actual := len(test.Expected), num; expected != actual {
-			t.Errorf("For test #%d, expected %d, but actually got %d.", testNumber, expected, actual)
-			t.Errorf("\tINDENTATION: %q", test.Indentation)
-			t.Errorf("\tDATA: ...")
-			for dN, d := range test.Data {
-				t.Errorf("\t\t[%d] %q", dN, string(d))
+		{
+			var expected int
+			for _, datum := range test.Data {
+				expected += len(datum)
 			}
-			t.Errorf("\tEXPECTED: %q", expected)
-			t.Errorf("\tACTUAL:   %q", actual)
-			continue
+
+			if actual := num; expected != actual {
+				t.Errorf("For test #%d, expected %d, but actually got %d.", testNumber, expected, actual)
+				t.Errorf("\tINDENTATION: %q", test.Indentation)
+				t.Errorf("\tDATA: ...")
+				for dN, d := range test.Data {
+					t.Errorf("\t\t[%d] %q", dN, string(d))
+				}
+				t.Errorf("\tEXPECTED: %q", expected)
+				t.Errorf("\tACTUAL:   %q", actual)
+				continue
+			}
 		}
 	}
 }

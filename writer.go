@@ -48,8 +48,7 @@ func (receiver *Writer) Write(bytes []byte) (int, error) {
 			receiver.notPending = true
 
 			if '\n' != r {
-				num, err := receiver.writeIndent()
-				n += num
+				_, err := receiver.writeIndent()
 				if nil != err {
 					return n, err
 				}
