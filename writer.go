@@ -16,6 +16,25 @@ type Writer struct {
 	notPending bool
 }
 
+// Write makes indent.Writer fit the io.Writer interface.
+//
+// The returned integer returned from indent.Writer.Write() represents how many bytes of ‘bytes’ was written.
+// I.e., it does not count the indentation that was written.
+//
+// I.e., so for this example:
+//
+//	var indenter indent.Writer = indent.Writer{
+//		Indentation: "\t\t",
+//		Writer:      writer,
+//	}
+//	
+//	// ...
+//	
+//	var p []byte = []byte("Hello world!") // The length of this string is: 12
+//
+//	n, err := indenter.Write(p)
+//
+// If everything was successful, then ‘n’ would 12, not 14.
 func (receiver *Writer) Write(bytes []byte) (int, error) {
 	if nil == receiver {
 		return 0, errNilReceiver
