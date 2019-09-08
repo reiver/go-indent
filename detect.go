@@ -16,7 +16,7 @@ import (
 //
 // ‘dst’ can be a io.ReadSeeker, io.ReaderAt, []byte, or a string.
 //
-// ‘src’ can be a io.Writer, or a []bte.
+// ‘src’ can be a io.Writer, or a []byte.
 func Detect(dst interface{}, src interface{}) (error) {
 	if nil == src {
 		return errNilSource
