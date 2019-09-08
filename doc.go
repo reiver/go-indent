@@ -1,5 +1,5 @@
 /*
-Package indent provides tools for indentation of UTF-8 text, for the Go programming language.
+Package indent provides tools for creating, and detecting indentation of UTF-8 text, for the Go programming language.
 
 For example, if you take some text, package indent can make it so it puts tabs, or spaces for indentation
 in front of each non-empty line.
