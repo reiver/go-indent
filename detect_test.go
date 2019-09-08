@@ -235,7 +235,15 @@ func TestDetect(t *testing.T) {
 			var dst strings.Builder
 			var src io.ReadSeeker = strings.NewReader(test.Src)
 
-			err := indent.Detect(&dst, src)
+			positionBefore, err := src.Seek(0, io.SeekCurrent)
+			if nil != err {
+				t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+				t.Logf("ERROR TYPE: %T", err)
+				t.Logf("ERROR: %q", err)
+				continue
+			}
+
+			err = indent.Detect(&dst, src)
 			if nil != err {
 				t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
 				t.Logf("ERROR TYPE: %T", err)
@@ -249,6 +257,83 @@ func TestDetect(t *testing.T) {
 				t.Logf("ACTUAL: %q", actual)
 				continue
 			}
+
+			positionAfter, err := src.Seek(0, io.SeekCurrent)
+			if nil != err {
+				t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+				t.Logf("ERROR TYPE: %T", err)
+				t.Logf("ERROR: %q", err)
+				continue
+			}
+
+			if expected, actual := positionBefore, positionAfter; expected != actual {
+				t.Errorf("For test #%d, did not actually get what was expected.", testNumber)
+				t.Logf("EXPECTED: %d", expected)
+				t.Logf("ACTUAL: %d", actual)
+				continue
+			}
+		}
+		{
+			var prefix string = `//THIS IS THE PREFIX\\`
+
+			var dst strings.Builder
+			var src io.ReadSeeker = strings.NewReader(prefix + test.Src)
+
+			{
+				var temp []byte = make([]byte, len(prefix))
+
+				n, err := src.Read(temp)
+				if nil != err {
+					t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+					t.Logf("ERROR TYPE: %T", err)
+					t.Logf("ERROR: %q", err)
+					continue
+				}
+				if expected, actual := len(prefix), n; expected != actual {
+					t.Errorf("For test #%d, did not actually get what was expected.", testNumber)
+					t.Logf("EXPECTED: %d", expected)
+					t.Logf("ACTUAL: %d", actual)
+					continue
+				}
+			}
+
+			positionBefore, err := src.Seek(0, io.SeekCurrent)
+			if nil != err {
+				t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+				t.Logf("ERROR TYPE: %T", err)
+				t.Logf("ERROR: %q", err)
+				continue
+			}
+
+			err = indent.Detect(&dst, src)
+			if nil != err {
+				t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+				t.Logf("ERROR TYPE: %T", err)
+				t.Logf("ERROR: %q", err)
+				continue
+			}
+
+			if expected, actual := test.Expected, dst.String(); expected != actual {
+				t.Errorf("For test #%d, did not actually get what was expected.", testNumber)
+				t.Logf("EXPECTED: %q", expected)
+				t.Logf("ACTUAL: %q", actual)
+				continue
+			}
+
+			positionAfter, err := src.Seek(0, io.SeekCurrent)
+			if nil != err {
+				t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+				t.Logf("ERROR TYPE: %T", err)
+				t.Logf("ERROR: %q", err)
+				continue
+			}
+
+			if expected, actual := positionBefore, positionAfter; expected != actual {
+				t.Errorf("For test #%d, did not actually get what was expected.", testNumber)
+				t.Logf("EXPECTED: %d", expected)
+				t.Logf("ACTUAL: %d", actual)
+				continue
+			}
 		}
 
 		// dst: []byte
@@ -257,7 +342,15 @@ func TestDetect(t *testing.T) {
 			var dst []byte = make([]byte, len(test.Expected))
 			var src io.ReadSeeker = strings.NewReader(test.Src)
 
-			err := indent.Detect(dst, src)
+			positionBefore, err := src.Seek(0, io.SeekCurrent)
+			if nil != err {
+				t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+				t.Logf("ERROR TYPE: %T", err)
+				t.Logf("ERROR: %q", err)
+				continue
+			}
+
+			err = indent.Detect(dst, src)
 			if nil != err {
 				t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
 				t.Logf("ERROR TYPE: %T", err)
@@ -269,6 +362,83 @@ func TestDetect(t *testing.T) {
 				t.Errorf("For test #%d, did not actually get what was expected.", testNumber)
 				t.Logf("EXPECTED: %q", expected)
 				t.Logf("ACTUAL: %q", actual)
+				continue
+			}
+
+			positionAfter, err := src.Seek(0, io.SeekCurrent)
+			if nil != err {
+				t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+				t.Logf("ERROR TYPE: %T", err)
+				t.Logf("ERROR: %q", err)
+				continue
+			}
+
+			if expected, actual := positionBefore, positionAfter; expected != actual {
+				t.Errorf("For test #%d, did not actually get what was expected.", testNumber)
+				t.Logf("EXPECTED: %d", expected)
+				t.Logf("ACTUAL: %d", actual)
+				continue
+			}
+		}
+		{
+			var prefix string = `//THIS IS THE PREFIX\\`
+
+			var dst []byte = make([]byte, len(test.Expected))
+			var src io.ReadSeeker = strings.NewReader(prefix + test.Src)
+
+			{
+				var temp []byte = make([]byte, len(prefix))
+
+				n, err := src.Read(temp)
+				if nil != err {
+					t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+					t.Logf("ERROR TYPE: %T", err)
+					t.Logf("ERROR: %q", err)
+					continue
+				}
+				if expected, actual := len(prefix), n; expected != actual {
+					t.Errorf("For test #%d, did not actually get what was expected.", testNumber)
+					t.Logf("EXPECTED: %d", expected)
+					t.Logf("ACTUAL: %d", actual)
+					continue
+				}
+			}
+
+			positionBefore, err := src.Seek(0, io.SeekCurrent)
+			if nil != err {
+				t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+				t.Logf("ERROR TYPE: %T", err)
+				t.Logf("ERROR: %q", err)
+				continue
+			}
+
+			err = indent.Detect(dst, src)
+			if nil != err {
+				t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+				t.Logf("ERROR TYPE: %T", err)
+				t.Logf("ERROR: %q", err)
+				continue
+			}
+
+			if expected, actual := test.Expected, string(dst); expected != actual {
+				t.Errorf("For test #%d, did not actually get what was expected.", testNumber)
+				t.Logf("EXPECTED: %q", expected)
+				t.Logf("ACTUAL: %q", actual)
+				continue
+			}
+
+			positionAfter, err := src.Seek(0, io.SeekCurrent)
+			if nil != err {
+				t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+				t.Logf("ERROR TYPE: %T", err)
+				t.Logf("ERROR: %q", err)
+				continue
+			}
+
+			if expected, actual := positionBefore, positionAfter; expected != actual {
+				t.Errorf("For test #%d, did not actually get what was expected.", testNumber)
+				t.Logf("EXPECTED: %d", expected)
+				t.Logf("ACTUAL: %d", actual)
 				continue
 			}
 		}
