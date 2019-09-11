@@ -464,7 +464,16 @@ func TestHasIndentation_error(t *testing.T) {
 
 	for testNumber, test := range tests {
 
-		has := indent.HasIndentation(test.Text, test.Indentation)
+		has, err := indent.HasIndentation(test.Text, test.Indentation)
+		if nil != err {
+			t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+			t.Logf("INDENTATION: %q (string)", test.IndentationString)
+			t.Logf("TEXT:        %q (string)", test.TextString)
+			t.Logf("INDENTATION TYPE: %T", test.Indentation)
+			t.Logf("TEXT:       TYPE  %T", test.Text)
+			t.Logf("ERROR TYPE: %T", err)
+			t.Logf("ERROR: %q", err)
+		}
 		if expected, actual := false, has; expected != actual {
 			t.Errorf("For test #%d, expected to be told it did not have the indentation, but it actually did.", testNumber)
 			t.Logf("INDENTATION: %q (string)", test.IndentationString)
@@ -935,7 +944,16 @@ func TestHasIndentation(t *testing.T) {
 
 	for testNumber, test := range tests {
 
-		has := indent.HasIndentation(test.Text, test.Indentation)
+		has, err := indent.HasIndentation(test.Text, test.Indentation)
+		if nil != err {
+			t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
+			t.Logf("INDENTATION: %q (string)", test.IndentationString)
+			t.Logf("TEXT:        %q (string)", test.TextString)
+			t.Logf("INDENTATION TYPE: %T", test.Indentation)
+			t.Logf("TEXT:       TYPE  %T", test.Text)
+			t.Logf("ERROR TYPE: %T", err)
+			t.Logf("ERROR: %q", err)
+		}
 		if expected, actual := true, has; expected != actual {
 			t.Errorf("For test #%d, expected to be told it indeed had the indentation, but it actually didn't.", testNumber)
 			t.Logf("INDENTATION: %q (string)", test.IndentationString)
