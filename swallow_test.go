@@ -468,7 +468,7 @@ func TestHasIndentation_error(t *testing.T) {
 		var dst strings.Builder
 		var src interface{} = test.Src
 
-		err := indent.Swallow(&dst, src, test.Indentation)
+		swallowed, err := indent.Swallow(&dst, src, test.Indentation)
 		if nil != err {
 			t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
 			t.Logf("INDENTATION: %q (string)", test.IndentationString)
@@ -477,6 +477,16 @@ func TestHasIndentation_error(t *testing.T) {
 			t.Logf("SRC:        TYPE  %T", test.Src)
 			t.Logf("ERROR TYPE: %T", err)
 			t.Logf("ERROR: %q", err)
+		}
+		if expected, actual := false, swallowed; expected != actual {
+			t.Errorf("For test #%d, expected to be told it did not have the indentation, but it actually did.", testNumber)
+			t.Logf("INDENTATION: %q (string)", test.IndentationString)
+			t.Logf("SRC:         %q (string)", test.SrcString)
+			t.Logf("DST:         %q", dst.String())
+			t.Logf("INDENTATION TYPE: %T", test.Indentation)
+			t.Logf("SRC:        TYPE  %T", test.Src)
+			t.Logf("EXPECTED: %t", expected)
+			t.Logf("ACTUAL:   %t", actual)
 		}
 		if expected, actual := test.IndentationString, dst.String(); expected == actual {
 			t.Errorf("For test #%d, expected to be told it did not have the indentation, but it actually did.", testNumber)
@@ -952,7 +962,7 @@ func TestHasIndentation(t *testing.T) {
 		var dst strings.Builder
 		var src interface{} = test.Src
 
-		err := indent.Swallow(&dst, src, test.Indentation)
+		swallowed, err := indent.Swallow(&dst, src, test.Indentation)
 		if nil != err {
 			t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
 			t.Logf("INDENTATION: %q (string)", test.IndentationString)
@@ -961,6 +971,16 @@ func TestHasIndentation(t *testing.T) {
 			t.Logf("SRC:        TYPE  %T", test.Src)
 			t.Logf("ERROR TYPE: %T", err)
 			t.Logf("ERROR: %q", err)
+		}
+		if expected, actual := true, swallowed; expected != actual {
+			t.Errorf("For test #%d, expected to be told it indeed had the indentation, but it actually didn't.", testNumber)
+			t.Logf("INDENTATION: %q (string)", test.IndentationString)
+			t.Logf("SRC:         %q (string)", test.SrcString)
+			t.Logf("DST:         %q", dst.String())
+			t.Logf("INDENTATION TYPE: %T", test.Indentation)
+			t.Logf("SRC:        TYPE  %T", test.Src)
+			t.Logf("EXPECTED: %t", expected)
+			t.Logf("ACTUAL:   %t", actual)
 		}
 		if expected, actual := test.IndentationString, dst.String(); expected != actual {
 			t.Errorf("For test #%d, expected to be told it indeed had the indentation, but it actually didn't.", testNumber)

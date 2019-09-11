@@ -18,7 +18,7 @@ import (
 // ‘src’ can be a rune, or a string, or a []byte, or an io.ReaderAt, or an io.RuneScanner.
 //
 // ‘indentation’ can be a rune, or a string, or a []byte, or an io.ReaderAt.
-func Swallow(dst oi.RuneWriter, src interface{}, indentation interface{}) error {
+func Swallow(dst oi.RuneWriter, src interface{}, indentation interface{}) (swallowed bool, err error) {
 
 	var indentationRuneScanner io.RuneScanner
 	{
@@ -32,7 +32,7 @@ func Swallow(dst oi.RuneWriter, src interface{}, indentation interface{}) error 
 		case rune:
 			indentationRuneScanner = strings.NewReader(string(casted))
 		default:
-			return fmt.Errorf("indent: indentation cannot be in type %T", indentation)
+			return false, fmt.Errorf("indent: indentation cannot be in type %T", indentation)
 		}
 	}
 
@@ -50,41 +50,41 @@ func Swallow(dst oi.RuneWriter, src interface{}, indentation interface{}) error 
 		case rune:
 			srcRuneScanner = strings.NewReader(string(casted))
 		default:
-			return fmt.Errorf("indent: source cannot be in type %T", src)
+			return false, fmt.Errorf("indent: source cannot be in type %T", src)
 		}
 	}
 
 	return swallow(dst, srcRuneScanner, indentationRuneScanner)
 }
 
-func swallow(dst oi.RuneWriter, src io.RuneScanner, indentation io.RuneScanner) error {
+func swallow(dst oi.RuneWriter, src io.RuneScanner, indentation io.RuneScanner) (bool, error) {
 
 	for {
 		rIndentation, _, err := indentation.ReadRune()
 		if nil != err && io.EOF == err {
-			return nil
+			return true, nil
 		}
 		if nil != err {
-			return err
+			return false, err
 		}
 
 		rSrc, _, err := src.ReadRune()
 		if nil != err && io.EOF == err {
-			return nil
+			return false, nil
 		}
 		if nil != err {
-			return err
+			return false, err
 		}
 
 		if expected, actual := rIndentation, rSrc; expected != actual {
 			if err := src.UnreadRune(); nil != err {
-				return err
+				return false, err
 			}
-			return nil
+			return false, nil
 		}
 
 		if _, err := dst.WriteRune(rSrc); nil != err {
-			return err
+			return false, err
 		}
 	}
 }
