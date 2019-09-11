@@ -10,16 +10,15 @@ import (
 	"strings"
 )
 
-// HasIndentation returns whether ‘value’ begins with the value of ‘indentation’.
+// Swallow returns whether ‘src’ begins with the value of ‘indentation’.
+// Swallow also writes whatever it reads that matches the indentation to ‘dst’.
 //
-// HasIndentation is somewhat similar to strings.HasPrefix(), and bytes.HasPrefix,
-// except the prefix and value (using with HasIndentation) can be of more types,
-// AND if ‘value’ is io.RuneScanner, then it reads (and discards) the indentation in ‘value’.
+// Swallow is somewhat similar to strings.HasPrefix(), and bytes.HasPrefix.
 //
-// ‘value’ can be a rune, or a string, or a []byte, or an io.ReaderAt, or an io.RuneScanner.
+// ‘src’ can be a rune, or a string, or a []byte, or an io.ReaderAt, or an io.RuneScanner.
 //
 // ‘indentation’ can be a rune, or a string, or a []byte, or an io.ReaderAt.
-func HasIndentation(value interface{}, indentation interface{}) (bool, error) {
+func Swallow(dst oi.RuneWriter, src interface{}, indentation interface{}) error {
 
 	var indentationRuneScanner io.RuneScanner
 	{
@@ -33,55 +32,59 @@ func HasIndentation(value interface{}, indentation interface{}) (bool, error) {
 		case rune:
 			indentationRuneScanner = strings.NewReader(string(casted))
 		default:
-			return false, fmt.Errorf("indent: indentation cannot be in type %T", indentation)
+			return fmt.Errorf("indent: indentation cannot be in type %T", indentation)
 		}
 	}
 
-	var valueRuneScanner io.RuneScanner
+	var srcRuneScanner io.RuneScanner
 	{
-		switch casted := value.(type) {
+		switch casted := src.(type) {
 		case io.RuneScanner:
-			valueRuneScanner = casted
+			srcRuneScanner = casted
 		case io.ReaderAt:
-			valueRuneScanner = utf8s.NewRuneScanner(oi.ReadSeeker(casted))
+			srcRuneScanner = utf8s.NewRuneScanner(oi.ReadSeeker(casted))
 		case []byte:
-			valueRuneScanner = bytes.NewReader(casted)
+			srcRuneScanner = bytes.NewReader(casted)
 		case string:
-			valueRuneScanner = strings.NewReader(casted)
+			srcRuneScanner = strings.NewReader(casted)
 		case rune:
-			valueRuneScanner = strings.NewReader(string(casted))
+			srcRuneScanner = strings.NewReader(string(casted))
 		default:
-			return false, fmt.Errorf("indent: value cannot be in type %T", value)
+			return fmt.Errorf("indent: source cannot be in type %T", src)
 		}
 	}
 
-	return hasIndentation(valueRuneScanner, indentationRuneScanner)
+	return swallow(dst, srcRuneScanner, indentationRuneScanner)
 }
 
-func hasIndentation(value io.RuneScanner, indentation io.RuneScanner) (bool, error) {
+func swallow(dst oi.RuneWriter, src io.RuneScanner, indentation io.RuneScanner) error {
 
 	for {
 		rIndentation, _, err := indentation.ReadRune()
 		if nil != err && io.EOF == err {
-			return true, nil
+			return nil
 		}
 		if nil != err {
-			return false, err
+			return err
 		}
 
-		rValue, _, err := value.ReadRune()
+		rSrc, _, err := src.ReadRune()
 		if nil != err && io.EOF == err {
-			return false, nil
+			return nil
 		}
 		if nil != err {
-			return false, err
+			return err
 		}
 
-		if expected, actual := rIndentation, rValue; expected != actual {
-			if err := value.UnreadRune(); nil != err {
-				return false, err
+		if expected, actual := rIndentation, rSrc; expected != actual {
+			if err := src.UnreadRune(); nil != err {
+				return err
 			}
-			return false, nil
+			return nil
+		}
+
+		if _, err := dst.WriteRune(rSrc); nil != err {
+			return err
 		}
 	}
 }

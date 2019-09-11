@@ -1,3 +1,4 @@
+
 package indent_test
 
 import (
@@ -14,10 +15,10 @@ func TestHasIndentation_error(t *testing.T) {
 
 	tests := []struct{
 		Indentation interface{}
-		Text interface{}
+		Src interface{}
 
 		IndentationString string
-		TextString string
+		SrcString string
 	}{}
 
 	randomness := rand.New(rand.NewSource( time.Now().UTC().UnixNano() ))
@@ -294,16 +295,16 @@ func TestHasIndentation_error(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        buffer.String(),
+					SrcString:         buffer.String(),
 				}
 				test.Indentation = test.IndentationString
-				test.Text        = test.TextString
+				test.Src         = test.SrcString
 
 				tests = append(tests, test)
 			}
@@ -313,16 +314,16 @@ func TestHasIndentation_error(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        buffer.String(),
+					SrcString:         buffer.String(),
 				}
 				test.Indentation = test.IndentationString
-				test.Text        = []byte(test.TextString)
+				test.Src         = []byte(test.SrcString)
 
 				tests = append(tests, test)
 			}
@@ -332,16 +333,16 @@ func TestHasIndentation_error(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        buffer.String(),
+					SrcString:         buffer.String(),
 				}
 				test.Indentation = test.IndentationString
-				test.Text        = strings.NewReader(test.TextString)
+				test.Src         = strings.NewReader(test.SrcString)
 
 				tests = append(tests, test)
 			}
@@ -351,16 +352,16 @@ func TestHasIndentation_error(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        buffer.String(),
+					SrcString:         buffer.String(),
 				}
 				test.Indentation = []byte(test.IndentationString)
-				test.Text        = test.TextString
+				test.Src         = test.SrcString
 
 				tests = append(tests, test)
 			}
@@ -370,16 +371,16 @@ func TestHasIndentation_error(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        buffer.String(),
+					SrcString:         buffer.String(),
 				}
 				test.Indentation = []byte(test.IndentationString)
-				test.Text        = []byte(test.TextString)
+				test.Src         = []byte(test.SrcString)
 
 				tests = append(tests, test)
 			}
@@ -389,16 +390,16 @@ func TestHasIndentation_error(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        buffer.String(),
+					SrcString:         buffer.String(),
 				}
 				test.Indentation = []byte(test.IndentationString)
-				test.Text        = strings.NewReader(test.TextString)
+				test.Src         = strings.NewReader(test.SrcString)
 
 				tests = append(tests, test)
 			}
@@ -408,16 +409,16 @@ func TestHasIndentation_error(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        buffer.String(),
+					SrcString:         buffer.String(),
 				}
 				test.Indentation = strings.NewReader(test.IndentationString)
-				test.Text        = test.TextString
+				test.Src         = test.SrcString
 
 				tests = append(tests, test)
 			}
@@ -427,16 +428,16 @@ func TestHasIndentation_error(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        buffer.String(),
+					SrcString:         buffer.String(),
 				}
 				test.Indentation = strings.NewReader(test.IndentationString)
-				test.Text        = []byte(test.TextString)
+				test.Src         = []byte(test.SrcString)
 
 				tests = append(tests, test)
 			}
@@ -446,16 +447,16 @@ func TestHasIndentation_error(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        buffer.String(),
+					SrcString:         buffer.String(),
 				}
 				test.Indentation = strings.NewReader(test.IndentationString)
-				test.Text        = strings.NewReader(test.TextString)
+				test.Src         = strings.NewReader(test.SrcString)
 
 				tests = append(tests, test)
 			}
@@ -464,23 +465,27 @@ func TestHasIndentation_error(t *testing.T) {
 
 	for testNumber, test := range tests {
 
-		has, err := indent.HasIndentation(test.Text, test.Indentation)
+		var dst strings.Builder
+		var src interface{} = test.Src
+
+		err := indent.Swallow(&dst, src, test.Indentation)
 		if nil != err {
 			t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
 			t.Logf("INDENTATION: %q (string)", test.IndentationString)
-			t.Logf("TEXT:        %q (string)", test.TextString)
+			t.Logf("SRC:         %q (string)", test.SrcString)
 			t.Logf("INDENTATION TYPE: %T", test.Indentation)
-			t.Logf("TEXT:       TYPE  %T", test.Text)
+			t.Logf("SRC:        TYPE  %T", test.Src)
 			t.Logf("ERROR TYPE: %T", err)
 			t.Logf("ERROR: %q", err)
 		}
-		if expected, actual := false, has; expected != actual {
+		if expected, actual := test.IndentationString, dst.String(); expected == actual {
 			t.Errorf("For test #%d, expected to be told it did not have the indentation, but it actually did.", testNumber)
 			t.Logf("INDENTATION: %q (string)", test.IndentationString)
-			t.Logf("TEXT:        %q (string)", test.TextString)
+			t.Logf("SRC:         %q (string)", test.SrcString)
 			t.Logf("INDENTATION TYPE: %T", test.Indentation)
-			t.Logf("TEXT:       TYPE  %T", test.Text)
-			t.Logf("HAS: %t", has)
+			t.Logf("SRC:        TYPE  %T", test.Src)
+			t.Logf("EXPECTED: %q", expected)
+			t.Logf("ACTUAL:   %q", actual)
 		}
 	}
 
@@ -490,10 +495,10 @@ func TestHasIndentation(t *testing.T) {
 
 	tests := []struct{
 		Indentation interface{}
-		Text interface{}
+		Src interface{}
 
 		IndentationString string
-		TextString string
+		SrcString string
 	}{}
 
 	randomness := rand.New(rand.NewSource( time.Now().UTC().UnixNano() ))
@@ -774,16 +779,16 @@ func TestHasIndentation(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        indentation + buffer.String(),
+					SrcString:         indentation + buffer.String(),
 				}
 				test.Indentation = test.IndentationString
-				test.Text        = test.TextString
+				test.Src         = test.SrcString
 
 				tests = append(tests, test)
 			}
@@ -793,16 +798,16 @@ func TestHasIndentation(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        indentation + buffer.String(),
+					SrcString:         indentation + buffer.String(),
 				}
 				test.Indentation = test.IndentationString
-				test.Text        = []byte(test.TextString)
+				test.Src         = []byte(test.SrcString)
 
 				tests = append(tests, test)
 			}
@@ -812,16 +817,16 @@ func TestHasIndentation(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        indentation + buffer.String(),
+					SrcString:         indentation + buffer.String(),
 				}
 				test.Indentation = test.IndentationString
-				test.Text        = strings.NewReader(test.TextString)
+				test.Src         = strings.NewReader(test.SrcString)
 
 				tests = append(tests, test)
 			}
@@ -831,16 +836,16 @@ func TestHasIndentation(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        indentation + buffer.String(),
+					SrcString:         indentation + buffer.String(),
 				}
 				test.Indentation = []byte(test.IndentationString)
-				test.Text        = test.TextString
+				test.Src         = test.SrcString
 
 				tests = append(tests, test)
 			}
@@ -850,16 +855,16 @@ func TestHasIndentation(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        indentation + buffer.String(),
+					SrcString:         indentation + buffer.String(),
 				}
 				test.Indentation = []byte(test.IndentationString)
-				test.Text        = []byte(test.TextString)
+				test.Src         = []byte(test.SrcString)
 
 				tests = append(tests, test)
 			}
@@ -869,16 +874,16 @@ func TestHasIndentation(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        indentation + buffer.String(),
+					SrcString:         indentation + buffer.String(),
 				}
 				test.Indentation = []byte(test.IndentationString)
-				test.Text        = strings.NewReader(test.TextString)
+				test.Src         = strings.NewReader(test.SrcString)
 
 				tests = append(tests, test)
 			}
@@ -888,16 +893,16 @@ func TestHasIndentation(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        indentation + buffer.String(),
+					SrcString:         indentation + buffer.String(),
 				}
 				test.Indentation = strings.NewReader(test.IndentationString)
-				test.Text        = test.TextString
+				test.Src         = test.SrcString
 
 				tests = append(tests, test)
 			}
@@ -907,16 +912,16 @@ func TestHasIndentation(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        indentation + buffer.String(),
+					SrcString:         indentation + buffer.String(),
 				}
 				test.Indentation = strings.NewReader(test.IndentationString)
-				test.Text        = []byte(test.TextString)
+				test.Src         = []byte(test.SrcString)
 
 				tests = append(tests, test)
 			}
@@ -926,16 +931,16 @@ func TestHasIndentation(t *testing.T) {
 			{
 				test := struct{
 					Indentation interface{}
-					Text interface{}
+					Src interface{}
 
 					IndentationString string
-					TextString string
+					SrcString string
 				}{
 					IndentationString: indentation,
-					TextString:        indentation + buffer.String(),
+					SrcString:         indentation + buffer.String(),
 				}
 				test.Indentation = strings.NewReader(test.IndentationString)
-				test.Text        = strings.NewReader(test.TextString)
+				test.Src         = strings.NewReader(test.SrcString)
 
 				tests = append(tests, test)
 			}
@@ -944,23 +949,27 @@ func TestHasIndentation(t *testing.T) {
 
 	for testNumber, test := range tests {
 
-		has, err := indent.HasIndentation(test.Text, test.Indentation)
+		var dst strings.Builder
+		var src interface{} = test.Src
+
+		err := indent.Swallow(&dst, src, test.Indentation)
 		if nil != err {
 			t.Errorf("For test #%d, did not expect an error, but actually got one.", testNumber)
 			t.Logf("INDENTATION: %q (string)", test.IndentationString)
-			t.Logf("TEXT:        %q (string)", test.TextString)
+			t.Logf("SRC:         %q (string)", test.SrcString)
 			t.Logf("INDENTATION TYPE: %T", test.Indentation)
-			t.Logf("TEXT:       TYPE  %T", test.Text)
+			t.Logf("SRC:        TYPE  %T", test.Src)
 			t.Logf("ERROR TYPE: %T", err)
 			t.Logf("ERROR: %q", err)
 		}
-		if expected, actual := true, has; expected != actual {
+		if expected, actual := test.IndentationString, dst.String(); expected != actual {
 			t.Errorf("For test #%d, expected to be told it indeed had the indentation, but it actually didn't.", testNumber)
 			t.Logf("INDENTATION: %q (string)", test.IndentationString)
-			t.Logf("TEXT:        %q (string)", test.TextString)
+			t.Logf("SRC:         %q (string)", test.SrcString)
 			t.Logf("INDENTATION TYPE: %T", test.Indentation)
-			t.Logf("TEXT:       TYPE  %T", test.Text)
-			t.Logf("HAS: %t", has)
+			t.Logf("SRC:        TYPE  %T", test.Src)
+			t.Logf("EXPECTED: %q", expected)
+			t.Logf("ACTUAL:   %q", actual)
 		}
 	}
 }
