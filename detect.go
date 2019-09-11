@@ -14,9 +14,9 @@ import (
 
 // Detect detects the indentation in ‘src’ and stores what it detected in ‘dst’.
 //
-// ‘dst’ can be a io.ReadSeeker, io.ReaderAt, []byte, or a string.
+// ‘dst’ can be an io.Writer, or a []byte.
 //
-// ‘src’ can be a io.Writer, or a []byte.
+// ‘src’ can be an io.ReadSeeker, or an io.ReaderAt, or a string, or a []byte.
 func Detect(dst interface{}, src interface{}) (error) {
 	if nil == src {
 		return errNilSource
